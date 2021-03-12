@@ -1,18 +1,18 @@
-﻿
-using errorhandling_problemdetails.Repository.Data.Models;
-using errorhandling_problemdetails.Services.Interfaces;
+﻿using ErrorHandlingProblemDetails.Data.Models;
+using ErrorHandlingProblemDetails.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 
-namespace errorhandling_problemdetails.Controllers
+namespace ErrorHandlingProblemDetails.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
+
         public ProductController(IProductService productService)
         {
             _productService = productService;
@@ -21,23 +21,26 @@ namespace errorhandling_problemdetails.Controllers
         [HttpGet]
         public async Task<IEnumerable<Product>> Get() => await _productService.GetAllPrpoducts();
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetById(int id)
         {
             var product = await _productService.GetProductById(id);
-            if (product != null)
-                return product;
-            else return BadRequest();
+            if (product == null)
+                return NotFound();
+
+            else return Ok(product);
         }
 
-        [HttpGet("{name}")]
+        [HttpGet("byName/{name}")]
         public async Task<ActionResult<Product>> GetByName(string name)
         {
+            throw new Exception("There was an exception while fetching the product");
+
             var product = await _productService.GetProductByName(name);
             if (product == null)
-                throw new Exception("There was an exception while fetching the product");
-            return product;
-                
+                return NotFound();
+
+            return Ok(product);
         }
 
         [HttpPost]
